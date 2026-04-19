@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  oracle-db:
+    image: gvenzl/oracle-free:latest
+    container_name: oracle-db
+    environment:
+      ORACLE_PASSWORD: ${DB_PASSWORD}
+      ORACLE_ALLOW_REMOTE: "true"
+
+    ports:
+      - "1521:1521"
+      - "5500:5500"
+    env_file:
+      - .env
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+
+  esg-app:
+    build: .
+    container_name: esg-app
+    environment:
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      SPRING_DATASOURCE_URL: ${DB_URL}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+
+      API_SECURITY_TOKEN_SECRET: ${JWT_SECRET}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - oracle-db
+
+volumes:
+  oracle-data:
