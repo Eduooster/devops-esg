@@ -57,10 +57,14 @@ jobs:
       name: production
 
     steps:
-      - name: Build Docker
-        run: docker build -t esg-app .
+      - name: Checkout do código
+        uses: actions/checkout@v4
 
-      - name: Run Production Container
-        run: |
-          docker run -d -p 8080:8080 --name prod-app esg-app
-          docker ps
+      - name: List files (debug)
+        run: ls -la
+
+      - name: Build Docker image
+        run: docker build -f Dockerfile -t esg-app .
+
+      - name: Run container
+        run: docker run -d -p 8080:8080 esg-app
