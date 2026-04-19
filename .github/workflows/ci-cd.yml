@@ -39,13 +39,15 @@ jobs:
     if: github.ref == 'refs/heads/develop'
 
     steps:
-      - name: Build Docker
-        run: docker build -t esg-app .
+      - name: Checkout do código
+        uses: actions/checkout@v4
+      
 
-      - name: Run Staging Container
-        run: |
-          docker run -d -p 8080:8080 --name staging-app esg-app
-          docker ps
+      - name: Debug files
+        run: ls -la
+
+      - name: Build Docker image
+        run: docker build -f ./Dockerfile -t esg-app ./
 
   deploy-production:
     name: Deploy Produção
