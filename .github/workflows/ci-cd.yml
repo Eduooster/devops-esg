@@ -64,4 +64,4 @@ jobs:
         run: ls -la
 
       - name: Build Docker image
-        run: docker build -f ./Dockerfile -t esg-app ./ 
+        run: docker build -f ./Dockerfile -t esg-app ./
