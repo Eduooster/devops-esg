@@ -1,35 +1,38 @@
-version: '3.8'
+version: "3.8"
 
 services:
-  oracle-db:
-    image: gvenzl/oracle-free:latest
-    container_name: oracle-db
-    environment:
-      ORACLE_PASSWORD: ${DB_PASSWORD}
-      ORACLE_ALLOW_REMOTE: "true"
 
+  db:
+    image: postgres:15
+    container_name: db
+    environment:
+      POSTGRES_DB: appdb
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD: apppass
     ports:
-      - "1521:1521"
-      - "5500:5500"
-    env_file:
-      - .env
+      - "5432:5432"
     volumes:
-      - oracle-data:/opt/oracle/oradata
+      - dbdata:/var/lib/postgresql/data
+    networks:
+      - app-network
 
-  esg-app:
+  app:
     build: .
-    container_name: esg-app
-    environment:
-      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
-      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
-      SPRING_DATASOURCE_URL: ${DB_URL}
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
-
-      API_SECURITY_TOKEN_SECRET: ${JWT_SECRET}
+    container_name: app
     ports:
       - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/appdb
+      SPRING_DATASOURCE_USERNAME: appuser
+      SPRING_DATASOURCE_PASSWORD: apppass
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
     depends_on:
-      - oracle-db
+      - db
+    networks:
+      - app-network
 
 volumes:
-  oracle-data:
+  dbdata:
+
+networks:
+  app-network:
