@@ -33,7 +33,7 @@ jobs:
         run: mvn clean install
 
       - name: Rodar testes
-        run: mvn test
+        run: mvn test -Dspring.profiles.active=test
 
   deploy-staging:
     name: Deploy Staging
