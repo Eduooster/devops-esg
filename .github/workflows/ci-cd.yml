@@ -60,11 +60,8 @@ jobs:
       - name: Checkout do código
         uses: actions/checkout@v4
 
-      - name: List files (debug)
+      - name: Debug files
         run: ls -la
 
       - name: Build Docker image
-        run: docker build -f Dockerfile -t esg-app .
-
-      - name: Run container
-        run: docker run -d -p 8080:8080 esg-app
+        run: docker build -f ./Dockerfile -t esg-app ./ 
