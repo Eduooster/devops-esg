@@ -6,7 +6,7 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.is;
 
-public class AutenticacaoApiTest {
+public class AutenticacaoApiTest extends BaseIntegracaoTest {
 
     private String authUrl = "/auth/login";
 

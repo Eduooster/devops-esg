@@ -4,14 +4,19 @@ import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeEach;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.is;
 
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public abstract class BaseIntegracaoTest {
     protected String token;
     protected Long pontoColetaId;
+    @LocalServerPort
+    private int port;
 
 
     String sufixo = String.valueOf(System.currentTimeMillis());
@@ -22,7 +27,7 @@ public abstract class BaseIntegracaoTest {
 
     @BeforeEach
     public  void setup() {
-        RestAssured.baseURI = "http://localhost:8080";
+        RestAssured.port = port;
 
         String corpoRegistro = """
 {
