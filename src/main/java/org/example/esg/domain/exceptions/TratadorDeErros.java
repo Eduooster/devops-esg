@@ -32,9 +32,20 @@ public class TratadorDeErros {
     }
 
     @ExceptionHandler({CapacidadePontoAtingida.class})
-    public ResponseEntity<Map<String, String>> CapacidadePontoAtingida(NominatimFailSearch ex) {
+    public ResponseEntity<Map<String, String>> CapacidadePontoAtingida(CapacidadePontoAtingida ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(this.detalhar(ex));
     }
+    @ExceptionHandler({MaterialNaoSuportadoException.class})
+    public ResponseEntity<Map<String, String>> MaterialNaoSuportadoException(MaterialNaoSuportadoException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(this.detalhar(ex));
+    }
+
+    @ExceptionHandler({PontoNaoEncontradoException.class})
+    public ResponseEntity<Map<String, String>> PontoNaoEncontradoException(PontoNaoEncontradoException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(this.detalhar(ex));
+    }
+
+
 
 
 

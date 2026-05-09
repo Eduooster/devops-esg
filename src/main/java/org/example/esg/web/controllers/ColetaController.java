@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping("/coleta")
@@ -23,10 +26,16 @@ public class ColetaController {
     }
 
     @PostMapping
-    public ResponseEntity criar (@RequestBody @Valid ColetaRequestDto request, @AuthenticationPrincipal Usuario usuario){
+    public ResponseEntity criar (@RequestBody @Valid ColetaRequestDto request, @AuthenticationPrincipal Usuario usuario,
+                                 UriComponentsBuilder uriBuilder){
 
         criarColetaService.criarColeta(request,usuario);
-        return ResponseEntity.ok().build();
+
+        URI uri = uriBuilder.path("/ponto-coleta/")
+                .buildAndExpand(1)
+                .toUri();
+        //ARRUMAR ISSOOOOOOOOOOOOOOOO
+        return ResponseEntity.created(uri).build();
 
     }
 

@@ -2,12 +2,16 @@ package org.example.esg.domain.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 @Entity
 @Table(name = "CAPACIDADEPONTO_ESG")
 @Data
 @ToString
+@Getter
+@Setter
 public class CapacidadePonto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

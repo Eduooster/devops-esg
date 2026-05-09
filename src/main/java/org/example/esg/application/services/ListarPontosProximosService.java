@@ -79,24 +79,36 @@ public class ListarPontosProximosService {
 
         verificarCoordenadasUsuario();
 
-        Mono<NominatimResponse> coordenadasUsuarioMono;
+        NominatimResponse coordenadas;
 
-        if (usuario.getEndereco().getLat() != null && usuario.getEndereco().getLng() != null) {
-            coordenadasUsuarioMono = Mono.just(new NominatimResponse(usuarioRepo.get().getEndereco().getLat(), usuarioRepo.get().getEndereco().getLng(),null));
+
+        Usuario usuarioAtual = usuarioRepo.orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        Endereco endereco = usuarioAtual.getEndereco();
+
+
+        if (endereco.getLat() != null && endereco.getLng() != null) {
+            coordenadas = new NominatimResponse(endereco.getLat(), endereco.getLng(), null);
         } else {
 
-            coordenadasUsuarioMono = nominatimService.buscarLatLng(usuarioRepo.get().getEndereco())
-                    .switchIfEmpty(Mono.error(new NominatimFailSearch("Não foi possível obter coordenadas do usuário")));
-            System.out.println(coordenadasUsuarioMono.block());
-            usuarioRepo.get().getEndereco().setLat(coordenadasUsuarioMono.block().lat());
-            usuarioRepo.get().getEndereco().setLng(coordenadasUsuarioMono.block().lon());
-            usuarioRepo.ifPresent(usuarioRepository::save);
+            coordenadas = nominatimService.buscarLatLng(endereco);
 
 
+            if (coordenadas == null) {
+                throw new NominatimFailSearch("Não foi possível obter coordenadas do usuário");
+            }
+
+
+            endereco.setLat(coordenadas.lat());
+            endereco.setLng(coordenadas.lon());
+            usuarioRepository.save(usuarioAtual);
+
+            System.out.println("Coordenadas atualizadas: " + coordenadas);
         }
 
+
+
         Page<PontoColetaResponseDto.PontoColetaComDistanciaDto> pontosMaisProximos = buscarDoisPontosMaisProximos(
-                pagina, coordenadasUsuarioMono.block().lat(),coordenadasUsuarioMono.block().lon(), pageable);
+                pagina, coordenadas.lat(), coordenadas.lon(), pageable);
 
         return pontosMaisProximos;
 

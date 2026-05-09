@@ -10,6 +10,7 @@ import lombok.*;
 @Getter
 @Setter
 @RequiredArgsConstructor
+@ToString
 public class Endereco {
     @NonNull private String cep;
     @NonNull private String logradouro;

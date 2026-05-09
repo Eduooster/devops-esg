@@ -23,26 +23,44 @@ public class NominatimClient {
     }
 
 
-    public Mono<NominatimResponse> buscarLatLongPorEndereco(Endereco endereco) {
+    public NominatimResponse buscarLatLongPorEndereco(Endereco endereco) {
 
-        String query = URLEncoder.encode(
+        String query  =
                 endereco.getLogradouro() + ", " +
                         endereco.getBairro() + ", " +
                         endereco.getLocalidade() + ", " +
-                        endereco.getUf() + ", Brasil",
-                StandardCharsets.UTF_8
-        );
+                        endereco.getUf() + ", Brasil";
 
 
-        return webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/search")
-                        .queryParam("q", query)
-                        .queryParam("format", "json")
-                        .queryParam("addressdetails", 1)
-                        .build())
+
+
+        System.out.println("QUERY ENCODED -> " + query);
+
+        NominatimResponse response = webClient.get()
+                .uri(uriBuilder -> {
+                    var uri = uriBuilder
+                            .path("/search")
+                            .queryParam("q", query)
+                            .queryParam("format", "json")
+                            .queryParam("addressdetails", 1)
+                            .build();
+
+                    System.out.println("URI FINAL -> " + uri);
+
+                    return uri;
+                })
                 .retrieve()
                 .bodyToFlux(NominatimResponse.class)
-                .next();
+                .doOnNext(item -> System.out.println("ITEM RECEBIDO -> " + item))
+                .doOnError(error -> {
+                    System.out.println("ERRO NA REQUISICAO");
+                    error.printStackTrace();
+                })
+                .next()
+                .block();
+
+        System.out.println("RESPONSE FINAL -> " + response);
+
+        return response;
     }
 }
