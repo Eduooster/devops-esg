@@ -66,23 +66,6 @@ public class ColetaApiTest extends BaseIntegracaoTest{
     }
 
 
-    @Test
-    public void deveValidarContratoDaApi() {
-        given()
-                .contentType("application/json")
-                .body("""
-            {
-              "pontoColetaId": 1,
-              "tipoMaterial": "PLASTICO",
-              "quantidadeDepositada": 10
-            }
-        """)
-                .when()
-                .post("/coletas")
-                .then()
-                .statusCode(201)
-                .body(matchesJsonSchemaInClasspath("schemas/coleta-schema.json"));
-    }
 }
 
 

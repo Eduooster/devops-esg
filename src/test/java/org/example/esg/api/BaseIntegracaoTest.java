@@ -97,7 +97,7 @@ public abstract class BaseIntegracaoTest {
         response.then()
                 .statusCode(anyOf(is(201),is(200)));
 
-        System.out.println(token + token );
+
 
 
         pontoColetaId = ((Number) responsePontoColeta.path("id")).longValue();

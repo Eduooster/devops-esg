@@ -80,8 +80,8 @@ public class PontoColetaController {
             return ResponseEntity.ok(pontosProximos);
     }
 
-    @DeleteMapping
-    public ResponseEntity excluir(@RequestParam Long id){
+    @DeleteMapping("/{id}")
+    public ResponseEntity excluir(@PathVariable Long id){
         excluirPontoService.excluir(id);
         return ResponseEntity.noContent().build();
     }
