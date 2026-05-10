@@ -20,17 +20,20 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http, SecurityFilter securityFilter) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/usuarios",
                                 "/h2-console/**",
-                                "/login","/register","ponto-coleta/**").permitAll()
+                                "/login", "/register"
+                        ).permitAll()
                         .anyRequest().authenticated()
-
-                ).addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
+                )
+                .headers(headers -> headers
+                        .frameOptions(frameOptions -> frameOptions.disable()) // Adicionado para permitir iframes
+                )
+                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

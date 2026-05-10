@@ -13,15 +13,21 @@ public class NominatimService {
     @Autowired
     NominatimClient nominatimClient;
 
-    public Mono<NominatimResponse> buscarLatLng(Endereco endereco) {
-        return nominatimClient.buscarLatLongPorEndereco(endereco)
-                .filter(response -> response != null && response.lat() != 0 && response.lon() != 0)
-                .switchIfEmpty(Mono.defer(() -> {
+    public NominatimResponse buscarLatLng(Endereco endereco) {
+        try {
 
-                    return Mono.empty();
-                }))
-                .onErrorResume(error -> {
-                    return Mono.empty();
-                });
+            NominatimResponse response = nominatimClient.buscarLatLongPorEndereco(endereco);
+
+
+            if (response != null && response.lat() != 0 && response.lon() != 0) {
+                return response;
+            }
+
+            return null; // Equivalente ao switchIfEmpty(Mono.empty())
+
+        } catch (Exception error) {
+            // Equivalente ao onErrorResume
+            return null;
+        }
     }
 }

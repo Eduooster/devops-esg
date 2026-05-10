@@ -1,11 +1,15 @@
 package org.example.esg.web.controllers;
 
 import jakarta.validation.Valid;
+import lombok.Builder;
+import org.example.esg.application.dtos.in.AtualizarPontoColeta;
+
 import org.example.esg.application.dtos.in.PontoColetaRequestDto;
 import org.example.esg.application.dtos.out.PontoColetaResponseDto;
 import org.example.esg.application.services.ListarPontosProximosService;
 import org.example.esg.application.services.PontoColetaService;
 
+import org.example.esg.application.services.pontoColetaServices.*;
 import org.example.esg.domain.entities.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,32 +25,41 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/ponto-coleta")
+@Builder
 
 public class PontoColetaController {
 
-    private final PontoColetaService pontoColetaService;
+    //private final PontoColetaService pontoColetaService;
     private final ListarPontosProximosService listarPontosProximosService;
+    private final AtualizarPontoColetaService atualizarPontoColetaService;
+    private final CriarPontoColetaService criarPontoColetaService;
+    private final ListarPontosColetaService listarPontosColetaService;
+    private final ListarPontosColetaFiltradoService listarPontosColetaFiltradoService;
+    private final ExcluirPontoService excluirPontoService;
+    private final BuscarPontoColetaPorIdService buscarPontoColetaPorIdService;
 
 
-    public PontoColetaController(PontoColetaService pontoColetaService, ListarPontosProximosService listarPontosProximosService) {
-        this.pontoColetaService = pontoColetaService;
 
-        this.listarPontosProximosService = listarPontosProximosService;
-    }
 
 
     @PostMapping
     public ResponseEntity<PontoColetaResponseDto> criar(@RequestBody @Valid PontoColetaRequestDto request, UriComponentsBuilder uriBuilder) {
-        System.out.println(request);
-        Mono<PontoColeta> cadastro = pontoColetaService.criar(request);
-        URI uri = uriBuilder.path("/usuario/{id}").buildAndExpand(new Object[]{cadastro.block().getId()}).toUri();
-        return ResponseEntity.created(uri).build();
 
+
+        PontoColetaResponseDto responseDto = criarPontoColetaService.criar(request);
+
+
+        URI uri = uriBuilder.path("/ponto-coleta/{id}")
+                .buildAndExpand(responseDto.id())
+                .toUri();
+
+
+        return ResponseEntity.created(uri).body(responseDto);
     }
 
     @GetMapping
     public ResponseEntity<Page<PontoColetaResponseDto>> listar(@PageableDefault(size = 10,sort = {"nome"}) Pageable pageable, @AuthenticationPrincipal Usuario usuario) {
-        return ResponseEntity.ok(pontoColetaService.listarPontos(pageable));
+        return ResponseEntity.ok(listarPontosColetaService.listarPontos(pageable));
     }
 
     @GetMapping("/filtrar")
@@ -55,7 +68,7 @@ public class PontoColetaController {
                                                                      @RequestParam(required = false) String uf,
                                                                      @RequestParam(required = false) TipoMaterial material) {
 
-        Page<PontoColetaResponseDto> pontos = pontoColetaService.listarPontosFiltrados(pageable,status, uf, material);
+        Page<PontoColetaResponseDto> pontos = listarPontosColetaFiltradoService.listarPontosFiltrados(pageable,status, uf, material);
         return ResponseEntity.ok(pontos);
 
     }
@@ -67,15 +80,15 @@ public class PontoColetaController {
             return ResponseEntity.ok(pontosProximos);
     }
 
-    @DeleteMapping
-    public ResponseEntity excluir(@RequestParam Long id){
-        pontoColetaService.excluir(id);
+    @DeleteMapping("/{id}")
+    public ResponseEntity excluir(@PathVariable Long id){
+        excluirPontoService.excluir(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/status-ponto")
-    public ResponseEntity atualizarStatusPonto(@RequestParam Long id,@RequestParam StatusPontoGeral status){
-        PontoColetaResponseDto pontoAtualizado =  pontoColetaService.atualizarStatusPonto(id,status);
+    @PatchMapping("/{id}")
+    public ResponseEntity atualizarStatusPonto( @RequestBody AtualizarPontoColeta dto ,@PathVariable Long id){
+        PontoColetaResponseDto pontoAtualizado =  atualizarPontoColetaService.atualizarStatusPonto(id,dto);
         return ResponseEntity.ok(pontoAtualizado);
 
     }

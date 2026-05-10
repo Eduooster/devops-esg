@@ -1,0 +1,86 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": [
+    "id",
+    "nome",
+    "endereco",
+    "capacidades",
+    "statusPontoGeral"
+  ],
+  "properties": {
+    "id": {
+      "type": "integer"
+    },
+    "nome": {
+      "type": "string"
+    },
+    "endereco": {
+      "type": "object",
+      "required": [
+        "cep",
+        "logradouro",
+        "bairro",
+        "localidade",
+        "uf",
+        "lat",
+        "lng"
+      ],
+      "properties": {
+        "cep": {
+          "type": "string"
+        },
+        "logradouro": {
+          "type": "string"
+        },
+        "bairro": {
+          "type": "string"
+        },
+        "localidade": {
+          "type": "string"
+        },
+        "uf": {
+          "type": "string"
+        },
+        "lat": {
+          "type": "number"
+        },
+        "lng": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "capacidades": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "tipoMaterial",
+          "quantidadeAtual",
+          "statusCapacidade",
+          "capacidade"
+        ],
+        "properties": {
+          "tipoMaterial": {
+            "type": "string"
+          },
+          "quantidadeAtual": {
+            "type": "integer"
+          },
+          "statusCapacidade": {
+            "type": "string"
+          },
+          "capacidade": {
+            "type": "integer"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "statusPontoGeral": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

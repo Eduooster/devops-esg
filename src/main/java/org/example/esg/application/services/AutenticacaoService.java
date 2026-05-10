@@ -61,14 +61,18 @@ public class AutenticacaoService {
         endereco.setLat(registro.enderecoDto().lat());
         endereco.setLng(registro.enderecoDto().lng());
 
+        System.out.println("Endereco: " + endereco);
+
 
 
         Usuario novo = new Usuario(
                 registro.nome(),
                 registro.email(),
                 passwordEncoder.encode(registro.senha()),
-                enderecoMapper.toDomain(registro.enderecoDto())
+                endereco
         );
+
+        System.out.println("Novo: " + novo);
 
         
         return usuarioRepository.save(novo);
